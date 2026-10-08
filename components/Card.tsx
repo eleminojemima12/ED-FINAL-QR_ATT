@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 
-import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/components/ThemeProvider';
 
 type Props = PropsWithChildren<{
   variant?: 'default' | 'elevated' | 'outlined';
@@ -10,6 +10,9 @@ type Props = PropsWithChildren<{
 }>;
 
 export default function Card({ children, variant = 'default', style }: Props) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
     <View
       style={[
@@ -24,14 +27,15 @@ export default function Card({ children, variant = 'default', style }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
   card: {
-    backgroundColor: COLORS.card,
+    backgroundColor: colors.card,
     borderRadius: 14,
     padding: 16,
   },
   elevated: {
-    shadowColor: COLORS.shadow,
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -39,6 +43,7 @@ const styles = StyleSheet.create({
   },
   outlined: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
   },
-});
+  });
+}

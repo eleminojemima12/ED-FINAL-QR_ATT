@@ -4,11 +4,13 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import AppButton from '@/components/AppButton';
 import { useAuth } from '@/components/AuthProvider';
-import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/components/ThemeProvider';
 import { registerAttendance } from '@/lib/attendance';
 
 export default function ScanScreen() {
   const { session, profile } = useAuth();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [lastData, setLastData] = useState<string | null>(null);
@@ -90,10 +92,11 @@ export default function ScanScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
@@ -104,12 +107,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 16,
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     bottom: 60,
-    backgroundColor: COLORS.card,
+    backgroundColor: colors.card,
     borderRadius: 14,
     padding: 16,
     alignItems: 'center',
@@ -127,13 +130,13 @@ const styles = StyleSheet.create({
   overlayText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 6,
     textAlign: 'center',
   },
   scanResult: {
     fontSize: 14,
-    color: COLORS.primary,
+    color: colors.primary,
     textAlign: 'center',
     marginBottom: 12,
   },
@@ -144,4 +147,5 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   success: { color: '#2E7D32' },
-});
+  });
+}

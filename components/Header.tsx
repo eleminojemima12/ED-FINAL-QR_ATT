@@ -1,16 +1,19 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/components/ThemeProvider';
 
 type Props = { title: string };
 
 export default function Header({ title }: Props) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <View style={styles.logoLockup}>
         <View style={styles.logoCircle}>
-          <Ionicons name="qr-code" size={48} color={COLORS.textOnPrimary} />
+          <Ionicons name="qr-code" size={48} color={colors.textOnPrimary} />
         </View>
         <View style={styles.logoTag}>
           <Text style={styles.logoTagText}>QR</Text>
@@ -22,7 +25,8 @@ export default function Header({ title }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
   container: {
     alignItems: 'center',
     paddingVertical: 24,
@@ -37,7 +41,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
     width: 116,
     height: 58,
     borderRadius: 12,
-    backgroundColor: COLORS.accent,
+    backgroundColor: colors.accent,
     justifyContent: 'center',
     alignItems: 'flex-end',
     paddingRight: 14,
@@ -58,7 +62,7 @@ const styles = StyleSheet.create({
     top: 15,
   },
   logoTagText: {
-    color: COLORS.textOnPrimary,
+    color: colors.textOnPrimary,
     fontSize: 17,
     lineHeight: 19,
     fontWeight: '900',
@@ -67,6 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
-});
+  });
+}

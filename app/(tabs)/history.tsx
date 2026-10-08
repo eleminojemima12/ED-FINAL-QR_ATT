@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '@/components/AuthProvider';
-import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/components/ThemeProvider';
 import {
   getAttendanceHistory,
   getTeacherEventSummaries,
@@ -12,6 +12,8 @@ import {
 
 export default function HistoryScreen() {
   const { session, profile } = useAuth();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [events, setEvents] = useState<TeacherEventSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -69,14 +71,16 @@ export default function HistoryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background, paddingHorizontal: 24, paddingTop: 24 },
-  title: { fontSize: 20, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 8 },
-  subtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center', lineHeight: 20 },
-  list: { paddingBottom: 24 },
-  emptyList: { flexGrow: 1, justifyContent: 'center' },
-  record: { backgroundColor: COLORS.card, borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: COLORS.border },
-  recordTitle: { fontSize: 16, fontWeight: '600', color: COLORS.textPrimary, marginBottom: 4 },
-  recordDetail: { fontSize: 13, color: COLORS.textSecondary },
-  error: { color: '#B71C1C', marginBottom: 12 },
-});
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 24, paddingTop: 24 },
+    title: { fontSize: 20, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 },
+    subtitle: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 20 },
+    list: { paddingBottom: 24 },
+    emptyList: { flexGrow: 1, justifyContent: 'center' },
+    record: { backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: colors.border },
+    recordTitle: { fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 },
+    recordDetail: { fontSize: 13, color: colors.textSecondary },
+    error: { color: '#B71C1C', marginBottom: 12 },
+  });
+}

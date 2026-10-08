@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { COLORS } from '@/constants/colors';
+import { useTheme } from '@/components/ThemeProvider';
 
 type Props = {
   title: string;
@@ -12,26 +12,29 @@ type Props = {
 };
 
 export default function AppButton({ title, icon, theme, onPress, disabled = false }: Props) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   if (theme === 'primary') {
     return (
       <View
         style={[
           styles.buttonOuter,
-          { borderWidth: 3, borderColor: COLORS.primary, borderRadius: 18 },
+          { borderWidth: 3, borderColor: colors.primary, borderRadius: 18 },
         ]}
       >
         <Pressable
-          style={[styles.buttonInner, { backgroundColor: COLORS.primary }, disabled && styles.disabled]}
+          style={[styles.buttonInner, { backgroundColor: colors.primary }, disabled && styles.disabled]}
           onPress={onPress}
           disabled={disabled}
         >
           <Ionicons
             name={icon}
             size={22}
-            color={COLORS.textOnPrimary}
+            color={colors.textOnPrimary}
             style={styles.icon}
           />
-          <Text style={[styles.label, { color: COLORS.textOnPrimary }]}>
+          <Text style={[styles.label, { color: colors.textOnPrimary }]}>
             {title}
           </Text>
         </Pressable>
@@ -45,7 +48,7 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
         <Ionicons
           name={icon}
           size={22}
-          color={COLORS.textSecondary}
+          color={colors.textSecondary}
           style={styles.icon}
         />
         <Text style={styles.label}>{title}</Text>
@@ -54,26 +57,28 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
   );
 }
 
-const styles = StyleSheet.create({
-  buttonOuter: {
-    width: '100%',
-    marginBottom: 14,
-  },
-  buttonInner: {
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: COLORS.card,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  icon: { paddingRight: 10 },
-  label: { fontSize: 17, fontWeight: '600', color: COLORS.textPrimary },
-  disabled: { opacity: 0.55 },
-});
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
+    buttonOuter: {
+      width: '100%',
+      marginBottom: 14,
+    },
+    buttonInner: {
+      borderRadius: 14,
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      backgroundColor: colors.card,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    icon: { paddingRight: 10 },
+    label: { fontSize: 17, fontWeight: '600', color: colors.textPrimary },
+    disabled: { opacity: 0.55 },
+  });
+}
