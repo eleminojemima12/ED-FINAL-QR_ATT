@@ -10,6 +10,7 @@ type ThemeContextValue = {
   theme: Theme;
   palette: ThemePalette;
   colors: ThemeColors;
+  loading: boolean;
   setTheme: (theme: Theme) => Promise<void>;
   setPalette: (palette: ThemePalette) => Promise<void>;
   storageError: string | null;
@@ -54,6 +55,7 @@ async function savePreferences(preferences: Preferences): Promise<void> {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
+  const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -66,6 +68,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (active) {
           setStorageError(error instanceof Error ? error.message : 'Could not load the saved theme.');
         }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -91,11 +96,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       theme: preferences.theme,
       palette: preferences.palette,
       colors: getThemeColors(preferences.theme, preferences.palette),
+      loading,
       setTheme,
       setPalette,
       storageError,
     }),
-    [preferences, storageError]
+    [preferences, loading, storageError]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

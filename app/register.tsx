@@ -59,6 +59,7 @@ export default function RegisterScreen() {
           <AppButton theme="primary" title={busy ? 'Creating...' : 'Create account'} icon="person-add-outline" onPress={handleRegister} disabled={busy} />
         </View>
         <Link href="/login" style={styles.link}>Already have an account?</Link>
+        <Link href="/admin-register" style={styles.link}>Set up administrator access</Link>
       </View>
     </KeyboardAvoidingView>
   );

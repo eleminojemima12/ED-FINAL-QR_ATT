@@ -24,7 +24,12 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
         ]}
       >
         <Pressable
-          style={[styles.buttonInner, { backgroundColor: colors.primary }, disabled && styles.disabled]}
+          style={({ pressed }) => [
+            styles.buttonInner,
+            { backgroundColor: colors.primary },
+            pressed && styles.pressed,
+            disabled && styles.disabled,
+          ]}
           onPress={onPress}
           disabled={disabled}
         >
@@ -44,7 +49,15 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
 
   return (
     <View style={styles.buttonOuter}>
-      <Pressable style={[styles.buttonInner, disabled && styles.disabled]} onPress={onPress} disabled={disabled}>
+      <Pressable
+        style={({ pressed }) => [
+          styles.buttonInner,
+          pressed && styles.pressed,
+          disabled && styles.disabled,
+        ]}
+        onPress={onPress}
+        disabled={disabled}
+      >
         <Ionicons
           name={icon}
           size={22}
@@ -79,6 +92,7 @@ function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
     },
     icon: { paddingRight: 10 },
     label: { fontSize: 17, fontWeight: '600', color: colors.textPrimary },
+    pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
     disabled: { opacity: 0.55 },
   });
 }

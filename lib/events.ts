@@ -4,8 +4,11 @@ export type Event = {
   id: string;
   code: string;
   title: string;
+  venue?: string;
+  description?: string;
   starts_at: string;
   ends_at: string;
+  status: string;
   created_by: string;
   created_at: string;
 };
@@ -13,9 +16,12 @@ export type Event = {
 export type CreateEventInput = {
   code: string;
   title: string;
+  venue?: string;
+  description?: string;
   startsAt: string;
   endsAt: string;
   createdBy: string;
+  status?: string;
 };
 
 export async function createEvent(input: CreateEventInput): Promise<Event> {
@@ -28,14 +34,17 @@ export async function createEvent(input: CreateEventInput): Promise<Event> {
     .insert({
       code: input.code,
       title: input.title,
+      venue: input.venue ?? null,
+      description: input.description ?? null,
       starts_at: input.startsAt,
       ends_at: input.endsAt,
+      status: input.status ?? 'upcoming',
       created_by: input.createdBy,
     })
     .select()
     .single();
   if (error?.code === '42501') {
-    throw new Error('Your Supabase profile is not marked as teacher. Run the role update SQL, then sign in again.');
+    throw new Error('Your Supabase profile is not marked as teacher or administrator. Run the role update SQL, then sign in again.');
   }
   if (error?.code === '23505') {
     throw new Error('This event code already exists. Choose a different code.');
@@ -67,4 +76,40 @@ export async function getTeacherEvents(teacherId: string): Promise<Event[]> {
     .order('starts_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as Event[];
+}
+
+export async function getAllEvents(): Promise<Event[]> {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .order('starts_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Event[];
+}
+
+export async function updateEvent(id: string, updates: Partial<Pick<Event, 'code' | 'title' | 'venue' | 'description' | 'starts_at' | 'ends_at' | 'status'>>): Promise<Event> {
+  const { data, error } = await supabase
+    .from('events')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Event;
+}
+
+export async function closeEvent(id: string): Promise<Event> {
+  const { data, error } = await supabase
+    .from('events')
+    .update({ status: 'closed' })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Event;
+}
+
+export async function deleteEvent(id: string): Promise<void> {
+  const { error } = await supabase.from('events').delete().eq('id', id);
+  if (error) throw error;
 }

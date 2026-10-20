@@ -2,12 +2,12 @@ import type { Session } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { getSession, subscribeToAuth } from '@/lib/auth';
-import { ensureProfile, getProfile, syncProfileRole, type Profile, type UserRole } from '@/lib/profiles';
+import { ensureProfile, getProfile, type Profile, type UserRole } from '@/lib/profiles';
 
 type AuthContextValue = {
   session: Session | null;
   profile: Profile | null;
-  role: 'student' | 'teacher' | null;
+  role: 'student' | 'teacher' | 'administrator' | null;
   loading: boolean;
   refreshProfile: () => Promise<void>;
 };
@@ -25,17 +25,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const profile = await getProfile(session.user.id);
-      const metadataRole = session.user.user_metadata?.role;
-      if ((metadataRole === 'teacher' || metadataRole === 'student') && profile.role !== metadataRole) {
-        setProfile(await syncProfileRole(session.user.id, metadataRole));
-      } else {
-        setProfile(profile);
-      }
+      setProfile(await getProfile(session.user.id));
     } catch {
       try {
         const metadataRole = session.user.user_metadata?.role;
-        const role: UserRole = metadataRole === 'teacher' ? 'teacher' : 'student';
+        const role: UserRole =
+          metadataRole === 'teacher' ? 'teacher' :
+          metadataRole === 'administrator' ? 'administrator' :
+          'student';
         setProfile(await ensureProfile(
           session.user.id,
           session.user.user_metadata?.full_name ?? '',

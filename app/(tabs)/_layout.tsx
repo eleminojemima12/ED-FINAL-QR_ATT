@@ -10,12 +10,17 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        headerStyle: { backgroundColor: colors.card },
-        headerShadowVisible: false,
-        headerTintColor: colors.textPrimary,
-        tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
+        tabBarStyle: {
+          height: 62,
+          paddingTop: 6,
+          paddingBottom: 5,
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
       <Tabs.Screen
@@ -58,6 +63,34 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="teacher"
+        options={{
+          href: role === 'teacher' || role === 'administrator' ? undefined : null,
+          title: 'Teacher',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'school' : 'school-outline'}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="admin"
+        options={{
+          href: role === 'administrator' ? undefined : null,
+          title: 'Admin',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'shield-checkmark' : 'shield-checkmark-outline'}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -70,21 +103,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      {role === 'teacher' && (
-        <Tabs.Screen
-          name="teacher"
-          options={{
-            title: 'Teacher',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons
-                name={focused ? 'school' : 'school-outline'}
-                color={color}
-                size={24}
-              />
-            ),
-          }}
-        />
-      )}
     </Tabs>
   );
 }

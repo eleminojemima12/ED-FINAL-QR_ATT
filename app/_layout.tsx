@@ -17,16 +17,19 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const { session, loading } = useAuth();
-  const { theme } = useTheme();
+  const { theme, loading: themeLoading } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || themeLoading) return;
     const isAuthRoute = pathname === '/login' || pathname === '/register';
-    if (!session && !isAuthRoute) router.replace('/login');
+    const isAdminSetupRoute = pathname === '/admin-register';
+    if (!session && !isAuthRoute && !isAdminSetupRoute) router.replace('/login');
     if (session && isAuthRoute) router.replace('/(tabs)');
-  }, [loading, pathname, router, session]);
+  }, [loading, pathname, router, session, themeLoading]);
+
+  if (themeLoading) return null;
 
   return (
     <>
@@ -35,6 +38,7 @@ function RootNavigator() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
+        <Stack.Screen name="admin-register" options={{ headerShown: false }} />
       </Stack>
     </>
   );

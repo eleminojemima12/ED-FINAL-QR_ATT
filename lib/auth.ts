@@ -9,7 +9,7 @@ export async function signUp(
   email: string,
   password: string,
   fullName: string,
-  role: 'student' | 'teacher'
+  role: 'student' | 'teacher' | 'administrator'
 ) {
   return supabase.auth.signUp({
     email,
